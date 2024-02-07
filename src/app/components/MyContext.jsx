@@ -1,11 +1,8 @@
-'use client'
-import React, { createContext, useEffect, useState } from "react";
+"use client";
+import React, { createContext, useState } from "react";
 const MyContext = createContext();
 
 const MyContextProvider = ({ children }) => {
-  const [task, setTask] = useState([]);
-  const [status, setStatus] = useState("Doing");
-  const [isLogin, setIsLogin] = useState(false);
   const [columnModal, setColumnModal] = useState(false);
   const [taskModal, setTaskModal] = useState(false);
   const [columnName, setColumnName] = useState("");
@@ -17,12 +14,6 @@ const MyContextProvider = ({ children }) => {
   return (
     <MyContext.Provider
       value={{
-        task,
-        setTask,
-        status,
-        setStatus,
-        isLogin,
-        setIsLogin,
         columnModal,
         setColumnModal,
         columnName,

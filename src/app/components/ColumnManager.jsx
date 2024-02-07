@@ -7,6 +7,8 @@ import Navbar from "./Navbar";
 
 const ColumnManager = () => {
   const { setColumnModal, columns } = useContext(MyContext);
+
+  
   return (
     <>
       <div className="shadow-lg glass-effect rounded-lg text-center relative h-[100%] w-[100%]">

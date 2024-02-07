@@ -1,19 +1,36 @@
-'use client'
+"use client";
 import React from "react";
+import logo from "../assets/logo.png";
+import Image from "next/image";
+import { signOut } from "firebase/auth";
+import { auth } from "./firebase";
+import { useRouter } from "next/navigation";
 
 function Navbar() {
+  const router = useRouter();
+  const handleSignOut = async () => {
+    try {
+      // Sign out the current user
+      localStorage.removeItem("user");
+      await signOut(auth);
+      router.push("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   return (
     <>
-      <div className="relative flex items-center justify-center py-7">
-        <img
-          src="https://updated-trello.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo.2c562fdb.png&w=128&q=75"
-          className="opacity-95"
+      <div className="relative flex items-center justify-center py-6">
+        <Image
+          src={logo}
+          className="opacity-75 w-28"
           alt="Logo"
           layout="fixed"
         />
         <button
-          // onClick={handleSignOut}
-          className="absolute top-5 right-5 bg-white bg-opacity-40  py-3 px-5 text-sm font-bold text-white rounded-[16px] "
+          onClick={handleSignOut}
+          className="absolute top-5 right-5 bg-white bg-opacity-40  py-3 px-5 text-sm font-bold text-white rounded-lg "
         >
           Sign out
         </button>

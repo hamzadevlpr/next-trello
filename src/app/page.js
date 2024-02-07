@@ -1,11 +1,25 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import ColumnManager from "./components/ColumnManager";
 
 export default function Home() {
-  return (
-    <>
-      <div className="m-8">
-        <ColumnManager />
-      </div>
-    </>
-  );
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(storedUser);
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
+
+  return user ? (
+    <div className="m-8">
+      <ColumnManager />
+    </div>
+  ) : null;
 }

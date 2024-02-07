@@ -1,10 +1,12 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { MyContext } from "./MyContext";
+import { set, ref, onValue } from "firebase/database";
+import { database } from "./firebase";
+import { uid } from "uid";
 
 function TaskModal() {
   const {
-    columns,
     tasks,
     setTasks,
     taskName,
@@ -12,18 +14,29 @@ function TaskModal() {
     taskModal,
     setTaskModal,
     selectedColumnId,
-    setSelectedColumnId,
+    columns,
   } = useContext(MyContext);
+  const [uuid, setUuid] = useState(uid());
+  const [columName, setColumnName] = useState("");
+  useEffect(() => {
+    const selectedColumn = columns.find((c) => c.id === selectedColumnId);
 
-  const generateUniqueId = () => {
-    return tasks.length + 1;
-  };
+    if (selectedColumn) {
+      setColumnName(selectedColumn.name);
+    }
+  }, [selectedColumnId, columns]);
 
   const handleAddTask = () => {
+    setUuid(uid());
+    set(ref(database, `tasks/${uuid}`), {
+      id: uuid,
+      taskName: taskName,
+      columnId: selectedColumnId,
+    });
     setTasks([
       ...tasks,
       {
-        id: generateUniqueId(),
+        id: uuid,
         taskName: taskName,
         columnId: selectedColumnId,
       },
@@ -31,6 +44,19 @@ function TaskModal() {
     setTaskModal(false);
     setTaskName("");
   };
+  const tasksRef = ref(database, "tasks");
+
+  useEffect(() => {
+    onValue(tasksRef, (snapshot) => {
+      setTasks([]);
+      const data = snapshot.val();
+      if (data !== null) {
+        Object.values(data).map((t) => {
+          setTasks((oldTasks) => [...oldTasks, t]);
+        });
+      }
+    });
+  }, []);
 
   return taskModal ? (
     <div className="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center">
@@ -46,7 +72,9 @@ function TaskModal() {
           aria-labelledby="modal-headline"
         >
           <div className="flex flex-col items-center p-8 rounded">
-            <h2 className="text-xl font-bold mb-4 text-gray-200">Add Task</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-200">
+              Add Task for {columName}
+            </h2>
             <input
               type="text"
               placeholder="Task Name"

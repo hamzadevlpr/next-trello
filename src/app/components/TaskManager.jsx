@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useContext } from "react";
 import ColumnModal from "./ColumnModal";
 import { MyContext } from "./MyContext";
@@ -7,14 +7,22 @@ import TaskModal from "./TaskModal";
 import Tasks from "./Tasks";
 
 const TaskManager = ({ columnId }) => {
-  const { setTaskModal, tasks, setSelectedColumnId } =
-    useContext(MyContext);
+  const {
+    setTaskModal,
+    tasks,
+    columns,
+    setSelectedColumnId,
+    selectedColumnId,
+  } = useContext(MyContext);
 
   return (
     <>
       <div className="flex flex-col justify-center items-center">
         {tasks.map((task, index) => (
-          <div key={index} className="w-full object-contain rounded-lg journal-scroll">
+          <div
+            key={index}
+            className="w-full object-contain rounded-lg journal-scroll"
+          >
             {task.columnId === columnId && (
               <Tasks name={task.taskName} id={task.id} />
             )}

@@ -1,6 +1,9 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { MyContext } from "./MyContext";
+import { set, ref, onValue } from "firebase/database";
+import { database } from "./firebase";
+import { uid } from "uid";
 
 function ColumnModal() {
   const {
@@ -12,18 +15,38 @@ function ColumnModal() {
     setColumnName,
   } = useContext(MyContext);
 
+  const [uuid, setUuid] = useState(uid());
+
+  const columnsRef = ref(database, "columns");
   const handleAddColumn = () => {
+    setUuid(uid());
     if (columnName.trim() !== "") {
-      setColumns([...columns, { id: columns.length * 1, name: columnName }]);
+      set(ref(database, `columns/${uuid}`), {
+        id: uuid,
+        name: columnName,
+      });
+      setColumns([...columns, { id: uuid, name: columnName }]);
       setColumnModal(false);
       setColumnName("");
     }
   };
+  useEffect(() => {
+    const unsubscribe = onValue(columnsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const columnsData = snapshot.val();
+        const columnsArray = Object.values(columnsData);
+        setColumns(columnsArray);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return columnModal ? (
     <div className="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center">
       <div className="text-center sm:block sm:p-0 w-[30rem]">
-
         {/* Background overlay */}
         <div className="fixed inset-0 backdrop-filter backdrop-blur-sm"></div>
 

@@ -1,6 +1,8 @@
-'use client'
+"use client";
 import React, { useContext, useState, useRef } from "react";
 import { MyContext } from "./MyContext";
+import { remove, ref, update } from "firebase/database";
+import { database } from "./firebase";
 
 function Tasks({ name, id }) {
   const { setColumns, tasks, setTasks } = useContext(MyContext);
@@ -10,11 +12,11 @@ function Tasks({ name, id }) {
   const pRef = useRef(null);
 
   // deleting task by task id
-  const handeDeleteColumn = () => {
-    const updatedColumn = tasks.filter((t) => t.id !== id);
-    setTasks(updatedColumn);
+  const handleDeleteTask = () => {
+    remove(ref(database, `tasks/${id}`));
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
   };
-
   const handleEditClick = () => {
     setEditing(true);
     setOriginalContent(pRef.current.textContent);
@@ -24,6 +26,13 @@ function Tasks({ name, id }) {
   const handleCancelEditClick = () => {
     setEditing(false);
     pRef.current.textContent = originalContent;
+  };
+
+  const handleSaveEditClick = () => {
+    update(ref(database, `tasks/${id}`), {
+      taskName: pRef.current.textContent,
+    });
+    setEditing(false);
   };
 
   return (
@@ -45,10 +54,7 @@ function Tasks({ name, id }) {
         <div className="flex justify-center items-center gap-2">
           {editing ? (
             <>
-              <button
-                title="Save Edit"
-                //   onClick={(e) => handleSaveEditClick(e)}
-              >
+              <button title="Save Edit" onClick={(e) => handleSaveEditClick()}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -99,7 +105,7 @@ function Tasks({ name, id }) {
                   />
                 </svg>
               </button>
-              <button title="Delete Task" onClick={handeDeleteColumn}>
+              <button title="Delete Task" onClick={handleDeleteTask}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

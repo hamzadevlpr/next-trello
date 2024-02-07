@@ -2,12 +2,15 @@
 import React, { useContext } from "react";
 import { MyContext } from "./MyContext";
 import TaskManager from "./TaskManager";
+import { remove, ref } from "firebase/database";
+import { database } from "./firebase";
 
 function Column({ name, id }) {
   const { setColumns, columns } = useContext(MyContext);
 
   // deleting column by column id
   const handeDeleteColumn = () => {
+    remove(ref(database, `columns/${id}`));
     const updatedColumn = columns.filter((c) => c.id !== id);
     setColumns(updatedColumn);
   };
@@ -15,7 +18,9 @@ function Column({ name, id }) {
   return (
     <>
       <div className="flex justify-between items-start p-4 bg-gray-300 mb-4 rounded-t-lg">
-        <h2 className="text-lg font-semibold text-gray-800">{name}</h2>
+        <h2 className="text-lg font-semibold text-gray-800">
+          {name.charAt(0).toUpperCase() + name.slice(1)}
+        </h2>
 
         <button onClick={handeDeleteColumn}>
           <svg

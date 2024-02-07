@@ -1,24 +1,24 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import Logo from "../../app/assets/logo.png";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { auth } from "../components/firebase";
-import {  signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { MyContext } from "../components/MyContext";
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
-import { db } from "../components/firebase";
 
 function Login() {
   const router = useRouter();
-  const { setIsLogin, setTask } = useContext(MyContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+    if (email === "" || password === "") {
+      return toast.error("All fields are required!");
+    }
+    setLoading(true);
     try {
       // sign in with email and password via firebase firestore
       const userCredential = await signInWithEmailAndPassword(
@@ -28,28 +28,12 @@ function Login() {
       );
       const user = userCredential.user;
       localStorage.setItem("user", JSON.stringify(user));
+      setLoading(false);
 
-      // add tasks to local storage
-      const fetchTasks = async () => {
-        const q = query(
-          collection(db, "tasks"),
-          where("userId", "==", user.uid)
-        );
-        const querySnapshot = await getDocs(q);
-
-        let tasksArray = [];
-        querySnapshot.forEach((doc) => {
-          tasksArray.push({ ...doc.data(), id: doc.id });
-        });
-        setTask(tasksArray);
-      };
-      fetchTasks();
-
-      // redirect to dashboard
-      setIsLogin(true);
-      router.push("/dashboard");
+      router.push("/");
       toast.success("User logged in successfully!");
     } catch (error) {
+      setLoading(false);
       const errorCode = error.code;
       const errorMessage = error.message;
       toast.error(errorMessage);
@@ -61,7 +45,7 @@ function Login() {
     <div className="h-screen flex justify-center items-center">
       <div className="fixed grid place-items-center backdrop-blur-sm top-0 right-0 left-0 z-50 w-full inset-0 h-modal h-full justify-center items-center">
         <div className="relative container m-auto px-6">
-          <div className="m-auto md:w-[35rem]">
+          <div className="m-auto md:w-[30rem]">
             <div className="rounded-xl glass-effect shadow-xl">
               <div className="p-8">
                 <div className="space-y-4">
@@ -71,7 +55,7 @@ function Login() {
                     className="w-40"
                     alt="logo"
                   />
-                  <h2 className="mb-8 text-2xl text-cyan-900  font-bold">
+                  <h2 className="mb-8 text-3xl text-cyan-900  font-bold">
                     Log in to unlock the best of Trello Magic App.
                   </h2>
                 </div>
@@ -107,24 +91,27 @@ function Login() {
                       </div>
                       <button
                         type="submit"
-                        className="font-semibold text-cyan-900 tracking-wide h-12 px-6 border rounded-lg hover:bg-pink-400 hover:text-white transition-all ease-in-out duration-300 hover:border"
+                        disabled={loading}
+                        className={`flex items-center justify-center ${
+                          loading ? "font-normal" : "font-semibold"
+                        } text-cyan-900 tracking-wide h-12 px-6 border rounded-lg hover:bg-pink-400 hover:text-white transition-all ease-in-out duration-300 hover:border`}
                       >
-                        Log in
+                        {loading ? "Loading..." : "Log in"}
                       </button>
                     </div>
                   </form>
-                  <div className="flex items-center gap-3">
-                    <hr className="w-full border-t-2 border-gray-300" />
-                    <span className="mb-2 text-gray-900 text-center">or</span>
-                    <hr className="w-full border-t-2 border-gray-300" />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="mb-2 text-gray-900 text-center">
-                      Already have an Account?
-                      <button onClick={() => router.push("/signup")}>
-                        Login
-                      </button>
+                  <div className="flex items-center gap-1 text-sm">
+                    <span className="text-gray-900 text-center">
+                      Don't have an account yet?
                     </span>
+                    <button
+                      className="font-medium hover:text-pink-800 underline"
+                      onClick={() => {
+                        router.push("/signup");
+                      }}
+                    >
+                      Register now
+                    </button>
                   </div>
                 </div>
               </div>

@@ -3,7 +3,6 @@ import React, { useContext, useState, useRef } from "react";
 import { MyContext } from "./MyContext";
 import { remove, ref, update } from "firebase/database";
 import { database } from "./firebase";
-
 function Tasks({ columnId, name, id }) {
   const { setColumns, tasks, setTasks, selectedColumnId } =
     useContext(MyContext);

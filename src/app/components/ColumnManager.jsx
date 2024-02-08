@@ -1,13 +1,18 @@
-"use client";
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import ColumnModal from "./ColumnModal";
 import { MyContext } from "./MyContext";
 import Column from "./Column";
 import Navbar from "./Navbar";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 
 const ColumnManager = () => {
-  const { setTasks, selectedColumnId, columns, setColumnModal } =
-    useContext(MyContext);
+  const {
+    setTasks,
+    setSelectedColumnId,
+    columns,
+    setColumnModal,
+    setTaskModal,
+  } = useContext(MyContext);
 
   return (
     <>
@@ -21,11 +26,32 @@ const ColumnManager = () => {
         </button>
         <div className="w-full flex items-baseline overflow-x-auto rounded-lg">
           {columns.map((column, index) => (
-            <div
-              key={index}
-              className="bg-gray-200 object-contain min-h-64 rounded-lg mx-2"
-            >
+            <div key={index} className="bg-gray-200  min-h-64 rounded-lg mx-2">
               <Column name={column.name} id={column.id} />
+
+              {/* task add icon */}
+              <button
+                className="m  -2 text-gray-800 w-10 h-10 flex rounded-full border-2 border-gray-800 justify-center items-center"
+                onClick={() => {
+                  setSelectedColumnId(column.id);
+                  setTaskModal(true);
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-8 h-8"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+              </button>
             </div>
           ))}
         </div>

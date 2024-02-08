@@ -38,7 +38,6 @@ function Column({ name, id }) {
           </svg>
         </button>
       </div>
-
       <TaskManager columnId={id} />
     </>
   );

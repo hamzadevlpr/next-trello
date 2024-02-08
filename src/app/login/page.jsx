@@ -29,7 +29,6 @@ function Login() {
       const user = userCredential.user;
       localStorage.setItem("user", JSON.stringify(user));
       setLoading(false);
-
       router.push("/");
       toast.success("User logged in successfully!");
     } catch (error) {

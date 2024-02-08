@@ -23,18 +23,19 @@ function Navbar() {
 
   return (
     <>
-      <div className="relative flex items-center justify-between py-6 mx-3">
-        <span
-          className="bg-white bg-opacity-40  py-3 px-5 text-sm font-bold text-white rounded "
-        >
-         {user?.email}
+      <div className="relative flex items-center justify-center sm:justify-between flex-col sm:flex-row gap-3 py-6 mx-3">
+        {/* user email */}
+        <span className="bg-white bg-opacity-40  py-3 px-5 text-sm font-bold text-white rounded ">
+          {user?.email}
         </span>
+        {/* Logo */}
         <Image
           src={logo}
           className="opacity-75 w-28"
           alt="Logo"
           layout="fixed"
         />
+        {/* sign out button */}
         <button
           onClick={handleSignOut}
           className="bg-white bg-opacity-40  py-3 px-5 text-sm font-bold text-white rounded "
@@ -42,9 +43,9 @@ function Navbar() {
           Sign out
         </button>
       </div>
-      <div className="w-full bg-[rgba(255,255,255,0.3)]">
+      <div className="py-3 w-full bg-[rgba(255,255,255,0.3)]">
         <div>
-          <div className="flex items-center px-3 justify-between">
+          <div className="flex items-center px-3 justify-center flex-wrap sm:justify-between gap-3">
             {/*  home and grid icon */}
             <div className="flex gap-2">
               <button className="bg-white bg-opacity-40  p-3 text-sm font-bold text-white rounded">
@@ -82,7 +83,7 @@ function Navbar() {
             </div>
 
             {/* right icons bell, plus, profile */}
-            <div className="flex gap-2 rounded m-1 items-center">
+            <div className="flex gap-2 rounded items-center">
               <button className="bg-white bg-opacity-40  p-3 text-sm font-bold text-white rounded">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

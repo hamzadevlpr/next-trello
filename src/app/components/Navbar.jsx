@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 
 function Navbar() {
   const router = useRouter();
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const handleSignOut = async () => {
     try {
       // Sign out the current user
@@ -21,7 +23,12 @@ function Navbar() {
 
   return (
     <>
-      <div className="relative flex items-center justify-center py-6">
+      <div className="relative flex items-center justify-between py-6 mx-3">
+        <span
+          className="bg-white bg-opacity-40  py-3 px-5 text-sm font-bold text-white rounded "
+        >
+         {user?.email}
+        </span>
         <Image
           src={logo}
           className="opacity-75 w-28"
@@ -30,7 +37,7 @@ function Navbar() {
         />
         <button
           onClick={handleSignOut}
-          className="absolute top-5 right-5 bg-white bg-opacity-40  py-3 px-5 text-sm font-bold text-white rounded-lg "
+          className="bg-white bg-opacity-40  py-3 px-5 text-sm font-bold text-white rounded "
         >
           Sign out
         </button>

@@ -1,19 +1,20 @@
 "use client";
-import React, { useContext } from "react";
-import ColumnModal from "./ColumnModal";
+import React, { useContext, useEffect } from "react";
 import { MyContext } from "./MyContext";
-import Column from "./Column";
 import TaskModal from "./TaskModal";
 import Tasks from "./Tasks";
+import { set, ref, onValue } from "firebase/database";
+import { database } from "./firebase";
 
 const TaskManager = ({ columnId }) => {
   const {
     setTaskModal,
     tasks,
-    columns,
+    setTasks,
     setSelectedColumnId,
     selectedColumnId,
   } = useContext(MyContext);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <>
@@ -24,12 +25,13 @@ const TaskManager = ({ columnId }) => {
             className="w-full object-contain rounded-lg journal-scroll"
           >
             {task.columnId === columnId && (
-              <Tasks name={task.taskName} id={task.id} />
+              <Tasks name={task.taskName} id={task.id} columnId={columnId} />
             )}
           </div>
         ))}
+        {/* task add icon */}
         <button
-          className="mx-2 text-gray-800 w-10 h-10 flex rounded-full border-2 border-gray-800 justify-center items-center"
+          className="m-2 text-gray-800 w-10 h-10 flex rounded-full border-2 border-gray-800 justify-center items-center"
           onClick={() => {
             setSelectedColumnId(columnId);
             setTaskModal(true);

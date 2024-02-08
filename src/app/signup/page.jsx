@@ -6,9 +6,6 @@ import { toast } from "react-hot-toast";
 import { auth } from "../components/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { MyContext } from "../components/MyContext";
-import { set, ref } from "firebase/database";
-import { database } from "../components/firebase";
 
 function Signup() {
   const router = useRouter();
@@ -23,18 +20,6 @@ function Signup() {
     createUserWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
         const user = userCredential.user;
-        try {
-          const userRef = ref(database, `users/${user.uid}`);
-
-          set(userRef, {
-            id: user.uid,
-            fullName: user.displayName,
-            email: user.email,
-          });
-        } catch (e) {
-          toast.error("Error adding document: ", e);
-          console.log(e);
-        }
         toast.success("User created successfully!");
       })
       .catch((error) => {

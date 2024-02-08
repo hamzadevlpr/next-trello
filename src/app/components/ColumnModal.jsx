@@ -1,51 +1,91 @@
 "use client";
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import { MyContext } from "./MyContext";
-import { set, ref, onValue } from "firebase/database";
+import { set, ref, onValue, get } from "firebase/database";
 import { database } from "./firebase";
 import { uid } from "uid";
 
 function ColumnModal() {
   const {
+    tasks,
     columnModal,
     setColumnModal,
     columns,
     setColumns,
     columnName,
     setColumnName,
+    selectedColumnId,
+    setTasks,
   } = useContext(MyContext);
 
+  const user = JSON.parse(localStorage.getItem("user"));
   const [uuid, setUuid] = useState(uid());
 
   const columnsRef = ref(database, "columns");
+
   const handleAddColumn = () => {
     setUuid(uid());
     if (columnName.trim() !== "") {
-      set(ref(database, `columns/${uuid}`), {
+      const timestamp = Date.now();
+      const columnData = {
         id: uuid,
         name: columnName,
+        timestamp: timestamp,
+      };
+
+      const columnRef = ref(database, `${user.uid}/columns/${uuid}`);
+
+      set(columnRef, columnData).then(() => {
+        setColumnModal(false);
+        setColumnName("");
+        setColumns([...columns, columnData]);
       });
-      setColumns([...columns, { id: uuid, name: columnName }]);
-      setColumnModal(false);
-      setColumnName("");
     }
   };
+
+  // read columns
   useEffect(() => {
-    const unsubscribe = onValue(columnsRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const columnsData = snapshot.val();
-        const columnsArray = Object.values(columnsData);
-        setColumns(columnsArray);
+    onValue(ref(database, `${user.uid}/columns`), (snapshot) => {
+      setColumns([]);
+      const data = snapshot.val();
+      if (data !== null) {
+        const columnss = Object.values(data).map((c) => {
+          setColumns((oldCol) => [...oldCol, c]);
+        });
       }
     });
-
-    return () => {
-      unsubscribe();
-    };
   }, []);
 
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      // Create an array to store tasks temporarily
+      const allTasks = [];
+
+      // Use Promise.all to fetch tasks for all columns concurrently
+      await Promise.all(
+        columns.map(async (c) => {
+          const snapshot = await get(
+            ref(database, `${user.uid}/columns/${c.id}/tasks`)
+          );
+          const data = snapshot.val();
+
+          if (data !== null) {
+            const tasks = Object.values(data);
+            allTasks.push(...tasks);
+          }
+        })
+      );
+
+      // Update the state with all the tasks
+      setTasks(allTasks);
+    };
+
+    fetchTasks();
+  }, [columns, user.uid, database]);
+
   return columnModal ? (
-    <div className="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center">
+    <div className="fixed z-10 inset-0  flex items-center justify-center">
       <div className="text-center sm:block sm:p-0 w-[30rem]">
         {/* Background overlay */}
         <div className="fixed inset-0 backdrop-filter backdrop-blur-sm"></div>

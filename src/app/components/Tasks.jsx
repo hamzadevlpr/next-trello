@@ -4,16 +4,18 @@ import { MyContext } from "./MyContext";
 import { remove, ref, update } from "firebase/database";
 import { database } from "./firebase";
 
-function Tasks({ name, id }) {
-  const { setColumns, tasks, setTasks } = useContext(MyContext);
+function Tasks({ columnId, name, id }) {
+  const { setColumns, tasks, setTasks, selectedColumnId } =
+    useContext(MyContext);
 
   const [editing, setEditing] = useState(false);
   const [originalContent, setOriginalContent] = useState(name);
   const pRef = useRef(null);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   // deleting task by task id
   const handleDeleteTask = () => {
-    remove(ref(database, `tasks/${id}`));
+    remove(ref(database, `${user.uid}/columns/${columnId}/tasks/${id}`));
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
   };
@@ -29,10 +31,16 @@ function Tasks({ name, id }) {
   };
 
   const handleSaveEditClick = () => {
-    update(ref(database, `tasks/${id}`), {
-      taskName: pRef.current.textContent,
-    });
-    setEditing(false);
+    const newTaskName = pRef.current.textContent;
+    if (newTaskName !== "") {
+      update(ref(database, `${user.uid}/columns/${columnId}/tasks/${id}`), {
+        taskName: newTaskName,
+      });
+
+      setEditing(false);
+    } else {
+      console.log("Task name cannot be empty");
+    }
   };
 
   return (

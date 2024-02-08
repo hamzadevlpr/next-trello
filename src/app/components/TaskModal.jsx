@@ -16,8 +16,10 @@ function TaskModal() {
     selectedColumnId,
     columns,
   } = useContext(MyContext);
+
   const [uuid, setUuid] = useState(uid());
   const [columName, setColumnName] = useState("");
+
   useEffect(() => {
     const selectedColumn = columns.find((c) => c.id === selectedColumnId);
 
@@ -26,13 +28,18 @@ function TaskModal() {
     }
   }, [selectedColumnId, columns]);
 
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const handleAddTask = () => {
     setUuid(uid());
-    set(ref(database, `tasks/${uuid}`), {
-      id: uuid,
-      taskName: taskName,
-      columnId: selectedColumnId,
-    });
+    set(
+      ref(database, `${user.uid}/columns/${selectedColumnId}/tasks/${uuid}`),
+      {
+        id: uuid,
+        taskName: taskName,
+        columnId: selectedColumnId,
+      }
+    );
     setTasks([
       ...tasks,
       {
@@ -44,19 +51,8 @@ function TaskModal() {
     setTaskModal(false);
     setTaskName("");
   };
-  const tasksRef = ref(database, "tasks");
 
-  useEffect(() => {
-    onValue(tasksRef, (snapshot) => {
-      setTasks([]);
-      const data = snapshot.val();
-      if (data !== null) {
-        Object.values(data).map((t) => {
-          setTasks((oldTasks) => [...oldTasks, t]);
-        });
-      }
-    });
-  }, []);
+
 
   return taskModal ? (
     <div className="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center">
@@ -66,7 +62,7 @@ function TaskModal() {
 
         {/* Modal */}
         <div
-          className="inline-block align-bottom bg-gradient-to-r from-pink-400 to-pink-600 text-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+          className="inline-block align-bottom bg-gradient-to-r from-pink-400 to-pink-600 text-gray-800 rounded-lg text-left -hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-headline"

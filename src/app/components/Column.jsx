@@ -6,22 +6,21 @@ import { remove, ref } from "firebase/database";
 import { database } from "./firebase";
 
 function Column({ name, id }) {
-  const { setColumns, columns } = useContext(MyContext);
+  const { setColumns, columns, tasks } = useContext(MyContext);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   // deleting column by column id
   const handeDeleteColumn = () => {
-    remove(ref(database, `columns/${id}`));
+    remove(ref(database, `${user.uid}/columns/${id}`));
     const updatedColumn = columns.filter((c) => c.id !== id);
     setColumns(updatedColumn);
   };
 
   return (
     <>
-      <div className="flex justify-between items-start p-4 bg-gray-300 mb-4 rounded-t-lg">
-        <h2 className="text-lg font-semibold text-gray-800">
-          {name.charAt(0).toUpperCase() + name.slice(1)}
-        </h2>
-
+      <div className="flex justify-between items-start p-4 bg-gray-300 mb-4 rounded-t-lg w-80">
+        <h2 className="text-lg font-semibold text-gray-800">{name}</h2>
+        {/* column delete icon */}
         <button onClick={handeDeleteColumn}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +28,7 @@ function Column({ name, id }) {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-6 h-6 text-rose-400 group-hover:animate-trash"
+            className="w-6 h-6 text-rose-400"
           >
             <path
               strokeLinecap="round"

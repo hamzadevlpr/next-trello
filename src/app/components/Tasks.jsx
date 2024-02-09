@@ -44,7 +44,7 @@ function Tasks({ columnId, name, id }) {
 
   return (
     <>
-      <div className="flex justify-between items-center mx-4 mb-2 bg-gray-50 p-2 rounded-md">
+      <div className="w-72 flex justify-between items-center mx-4 mb-2 bg-gray-50 p-2 rounded-md">
         <p
           ref={pRef}
           className={`${

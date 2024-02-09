@@ -38,6 +38,7 @@ function TaskModal() {
         id: uuid,
         taskName: taskName,
         columnId: selectedColumnId,
+        taskOrder: tasks.length + 1,
       }
     );
     setTasks([
@@ -46,13 +47,12 @@ function TaskModal() {
         id: uuid,
         taskName: taskName,
         columnId: selectedColumnId,
+        taskOrder: tasks.length + 1,
       },
     ]);
     setTaskModal(false);
     setTaskName("");
   };
-
-
 
   return taskModal ? (
     <div className="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center">

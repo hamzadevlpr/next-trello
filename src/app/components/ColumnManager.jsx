@@ -26,12 +26,12 @@ const ColumnManager = () => {
         </button>
         <div className="w-full flex items-baseline overflow-x-auto rounded-lg">
           {columns.map((column, index) => (
-            <div key={index} className="bg-gray-200  min-h-64 rounded-lg mx-2">
+            <div key={index} className="flex flex-col justify-center items-center bg-gray-200  min-h-64 rounded-lg mx-2">
               <Column name={column.name} id={column.id} />
 
               {/* task add icon */}
               <button
-                className="m  -2 text-gray-800 w-10 h-10 flex rounded-full border-2 border-gray-800 justify-center items-center"
+                className="m-2 text-gray-800 w-10 h-10 flex rounded-full border-2 border-gray-800 justify-center items-center"
                 onClick={() => {
                   setSelectedColumnId(column.id);
                   setTaskModal(true);

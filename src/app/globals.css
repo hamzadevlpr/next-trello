@@ -29,3 +29,4 @@
 body {
   @apply min-h-[96vh] h-full bg-gradient-to-r from-blue-400 via-pink-500 to-pink-500 bg-no-repeat object-contain;
 }
+

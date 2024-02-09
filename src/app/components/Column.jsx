@@ -18,7 +18,7 @@ function Column({ name, id }) {
 
   return (
     <>
-      <div className="flex justify-between items-start p-4 bg-gray-300 mb-4 rounded-t-lg w-80">
+      <div className="flex justify-between p-4 bg-gray-300 rounded-t-lg w-80">
         <h2 className="text-lg font-semibold text-gray-800">{name}</h2>
         {/* column delete icon */}
         <button onClick={handeDeleteColumn}>

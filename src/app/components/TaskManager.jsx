@@ -1,4 +1,3 @@
-"use client";
 import React, { useContext, useEffect } from "react";
 import { MyContext } from "./MyContext";
 import TaskModal from "./TaskModal";
@@ -24,18 +23,7 @@ const TaskManager = ({ columnId }) => {
       const updatedTasks = [...tasks];
       const [draggedItem] = updatedTasks.splice(source.index, 1);
       updatedTasks.splice(destination.index, 0, draggedItem);
-
-      // update the task order in the database when the task is dragged within the same column
-      // update(
-      //   ref(database, `${user.uid}/columns/${columnId}/tasks/${draggableId}`),
-      //   {
-      //     taskOrder: destination.index,
-      //   }
-      // );
       setTasks(updatedTasks);
-      console.log(tasks);
-    } else {
-      // Dropped in a different column
     }
   };
 
@@ -45,16 +33,20 @@ const TaskManager = ({ columnId }) => {
         <Droppable droppableId={columnId.toString()} type="columns">
           {(droppableProvided, droppableSnapshot) => (
             <div
+              className={`py-2 border w-full h-[25rem]  border-${
+                droppableSnapshot.isDraggingOver ? "pink-400" : "black"
+              } border-dashed`}
               ref={droppableProvided.innerRef}
               {...droppableProvided.droppableProps}
             >
               <div className="flex flex-col justify-center items-center">
                 {tasks.map((task, index) => (
-                  <div key={index} className="w-full rounded-lg journal-scroll">
+                  <div key={index} className="rounded-lg journal-scroll">
                     <Draggable
                       key={task.id}
                       draggableId={`${task.id}`}
                       index={index}
+                      type="columns"
                     >
                       {(draggableProvided, draggableSnapshot) => (
                         <div
@@ -69,18 +61,19 @@ const TaskManager = ({ columnId }) => {
                               columnId={columnId}
                             />
                           )}
+                          {draggableProvided.placeholder}
                         </div>
                       )}
                     </Draggable>
                   </div>
                 ))}
+                {droppableProvided.placeholder}
               </div>
-              {droppableProvided.placeholder}
             </div>
           )}
         </Droppable>
+        <TaskModal />
       </DragDropContext>
-      <TaskModal />
     </>
   );
 };

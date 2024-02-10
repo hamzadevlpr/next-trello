@@ -29,7 +29,8 @@ const ColumnManager = () => {
 
   const onDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
-    
+    // If user drops outside a valid droppable area
+    if (!destination) return;
   };
 
   return (

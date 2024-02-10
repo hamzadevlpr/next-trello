@@ -29,51 +29,16 @@ const TaskManager = ({ columnId }) => {
 
   return (
     <>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId={columnId.toString()} type="columns">
-          {(droppableProvided, droppableSnapshot) => (
-            <div
-              className={`py-2 border w-full h-[25rem]  border-${
-                droppableSnapshot.isDraggingOver ? "pink-400" : "black"
-              } border-dashed`}
-              ref={droppableProvided.innerRef}
-              {...droppableProvided.droppableProps}
-            >
-              <div className="flex flex-col justify-center items-center">
-                {tasks.map((task, index) => (
-                  <div key={index} className="rounded-lg journal-scroll">
-                    <Draggable
-                      key={task.id}
-                      draggableId={`${task.id}`}
-                      index={index}
-                      type="columns"
-                    >
-                      {(draggableProvided, draggableSnapshot) => (
-                        <div
-                          ref={draggableProvided.innerRef}
-                          {...draggableProvided.draggableProps}
-                          {...draggableProvided.dragHandleProps}
-                        >
-                          {task.columnId === columnId && (
-                            <Tasks
-                              name={task.taskName}
-                              id={task.id}
-                              columnId={columnId}
-                            />
-                          )}
-                          {draggableProvided.placeholder}
-                        </div>
-                      )}
-                    </Draggable>
-                  </div>
-                ))}
-                {droppableProvided.placeholder}
-              </div>
-            </div>
-          )}
-        </Droppable>
-        <TaskModal />
-      </DragDropContext>
+      <div className="flex flex-col justify-center items-center">
+        {tasks.map((task, index) => (
+          <div key={index} className="rounded-lg journal-scroll">
+            {task.columnId === columnId && (
+              <Tasks name={task.taskName} id={task.id} columnId={columnId} />
+            )}
+          </div>
+        ))}
+      </div>
+      <TaskModal />
     </>
   );
 };

@@ -31,6 +31,7 @@ const ColumnManager = () => {
                 key={index}
                 className="flex flex-col justify-between items-center bg-gray-200  min-h-64 rounded-lg mx-2"
               >
+                
                 <Column name={column.name} id={column.id} />
 
                 {/* task add icon */}

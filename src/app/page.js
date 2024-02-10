@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ColumnManager from "./components/ColumnManager";
+import { DragDropContext } from "react-beautiful-dnd";
 
 export default function Home() {
   const router = useRouter();
@@ -19,7 +20,9 @@ export default function Home() {
 
   return user ? (
     <div className="m-8">
-      <ColumnManager />
+      <DragDropContext onDragEnd={ColumnManager.onDragEnd}>
+        <ColumnManager />
+      </DragDropContext>
     </div>
   ) : null;
 }

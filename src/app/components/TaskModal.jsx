@@ -1,7 +1,7 @@
 "use client";
 import React, { useContext, useState, useEffect } from "react";
 import { MyContext } from "./MyContext";
-import { set, ref, onValue } from "firebase/database";
+import { set, ref } from "firebase/database";
 import { database } from "./firebase";
 import { uid } from "uid";
 
@@ -38,7 +38,6 @@ function TaskModal() {
         id: uuid,
         taskName: taskName,
         columnId: selectedColumnId,
-        taskOrder: tasks.length + 1,
       }
     );
     setTasks([
@@ -47,7 +46,6 @@ function TaskModal() {
         id: uuid,
         taskName: taskName,
         columnId: selectedColumnId,
-        taskOrder: tasks.length + 1,
       },
     ]);
     setTaskModal(false);

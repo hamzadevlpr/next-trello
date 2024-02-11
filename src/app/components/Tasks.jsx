@@ -3,9 +3,19 @@ import React, { useContext, useState, useRef } from "react";
 import { MyContext } from "./MyContext";
 import { remove, ref, update } from "firebase/database";
 import { database } from "./firebase";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 function Tasks({ columnId, name, id }) {
-  const { setColumns, tasks, setTasks, selectedColumnId } =
-    useContext(MyContext);
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const { tasks, setTasks } = useContext(MyContext);
 
   const [editing, setEditing] = useState(false);
   const [originalContent, setOriginalContent] = useState(name);
@@ -44,8 +54,13 @@ function Tasks({ columnId, name, id }) {
 
   return (
     <>
-    
-      <div className="w-72 flex justify-between items-center mx-4 mb-2 bg-gray-50 p-2 rounded-md">
+      <div
+        style={style}
+        ref={(node) => setNodeRef(node)}
+        {...attributes}
+        {...listeners}
+        className="border border-black w-72 flex justify-between items-center mx-4 mb-2 bg-gray-50 p-2 rounded-md"
+      >
         <p
           ref={pRef}
           className={`${

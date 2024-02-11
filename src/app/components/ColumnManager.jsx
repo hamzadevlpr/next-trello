@@ -6,6 +6,12 @@ import ColumnModal from "./ColumnModal";
 import { remove, ref } from "firebase/database";
 import { database } from "./firebase";
 import Navbar from "./Navbar";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
 
 const ColumnManager = () => {
   const {
@@ -15,6 +21,7 @@ const ColumnManager = () => {
     setColumns,
     setColumnModal,
     setTaskModal,
+    setTasks,
   } = useContext(MyContext);
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -23,6 +30,15 @@ const ColumnManager = () => {
     remove(ref(database, `${user.uid}/columns/${columnIdToDelete}`));
     const updatedColumns = columns.filter((c) => c.id !== columnIdToDelete);
     setColumns(updatedColumns);
+  };
+
+  const handleDragEnd = (event) => {
+    setTasks((task) => {
+      const oldIndex = tasks.findIndex((task) => task.id === event.active.id);
+      const newIndex = tasks.findIndex((task) => task.id === event.over.id);
+
+      return arrayMove(tasks, oldIndex, newIndex);
+    });
   };
 
   return (
@@ -69,17 +85,30 @@ const ColumnManager = () => {
                   </button>
                 </div>
                 <div className="flex flex-col justify-center items-center">
-                  {tasks
-                    .filter((task) => task.columnId === column.id)
-                    .map((task, index) => (
-                      <div key={index} className="rounded-lg journal-scroll">
-                        <Tasks
-                          name={task.taskName}
-                          id={task.id}
-                          columnId={column.id}
-                        />
-                      </div>
-                    ))}
+                  <DndContext
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={tasks}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {tasks
+                        .filter((task) => task.columnId === column.id)
+                        .map((task, index) => (
+                          <div
+                            key={index}
+                            className="rounded-lg journal-scroll"
+                          >
+                            <Tasks
+                              name={task.taskName}
+                              id={task.id}
+                              columnId={column.id}
+                            />
+                          </div>
+                        ))}
+                    </SortableContext>
+                  </DndContext>
                 </div>
                 {/* task add icon */}
                 <button
